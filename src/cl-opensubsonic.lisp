@@ -3,11 +3,28 @@
 (defvar *salt-len* 24)
 (defconstant +charset+ "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
+(define-condition subsonic-error (error)
+  ((code :initarg :code :reader error-code)
+   (message :initarg :message :reader error-message))
+  (:documentation "Custom base condition for when an OpenSubsonic server
+returns an error over the REST API.")
+  (:report (lambda (condition stream)
+             (format stream "Server returned error ~a: ~a"
+                     (error-code condition)
+                     (error-message condition)))))
+
 (defstruct sonic-login
   uri user pass (client "sone"))
 
 (defun split-api (name)
   (subseq name (1+ (position #\/ name))))
+
+(defun remove-kebab (sym)
+  (let ((split (uiop:split-string
+                (string-downcase (split-api (symbol-name sym)))
+                :separator '(#\-))))
+    (format nil "~a~{~:(~a~)~}"
+            (car split) (cdr split))))
 
 (defun gen-salt (&optional (len *salt-len*))
   (map 'string
@@ -36,126 +53,135 @@
                ("f" . "json")))
      (quri:uri uri))))
 
+(defun sonic-response (json)
+  (let* ((response (gethash "subsonic-response" json))
+         (status (gethash "status" response)))
+    (if (equalp status "failed")
+        (let ((error-info (gethash "error" response)))
+          (error 'subsonic-error
+                 :code (gethash "code" error-info)
+                 :message (gethash "message" error-info)))
+        response)))
+
 (defmacro sonic (name (&rest lambda-list) method
                  &key (parameters nil))
-  `(defun ,(read-from-string
-            (string-upcase (symbol-name name)))
+  `(defun ,name
        ,(push 'login lambda-list)
-     (gethash "subsonic-response"
-              (com.inuoe.jzon:parse
-               (drakma:http-request
-                (quri:render-uri
-                 (with-slots (uri user pass client) login
-                   (sonic-uri uri user pass client
-                              ,(split-api (symbol-name name)))))
-                :method ,method
-                :parameters ,parameters)))))
+     (sonic-response
+      (com.inuoe.jzon:parse
+       (drakma:http-request
+        (quri:render-uri
+         (with-slots (uri user pass client) login
+           (sonic-uri uri user pass client
+                      ,(remove-kebab name))))
+        :method ,method
+        :parameters ,parameters)))))
 
-;;;; system methods
-(sonic |system/ping| () :get)
-(sonic |system/getLicense| () :get)
-(sonic |system/getOpenSubsonicExtensions| () :get)
-(sonic |system/tokenInfo| () :get)
+;;;; system endpoints
+(sonic system/ping () :get)
+(sonic system/get-license () :get)
+(sonic system/get-open-subsonic-extensions () :get)
+(sonic system/token-info () :get)
 
-;;;; browsing methods
-(sonic |browsing/getMusicFolders| () :get)
-;; browsing/getIndexes
-;; browsing/getMusicDirectory
-(sonic browsing/getGenres () :get)
-;; browsing/getArtists
-;; browsing/getArtist
-;; browsing/getAlbum
-;; browsing/getSong
-(sonic browsing/getVideos () :get)
-;; browsing/getVideoInfo
-;; browsing/getArtistInfo
-;; browsing/getArtistInfo2
-;; browsing/getAlbumInfo
-;; browsing/getAlbumInfo2
-;; browsing/getSimilarSongs
-;; browsing/getSimilarSongs2
-;; browsing/getTopSongs
+;;;; browsing endpoints
+(sonic browsing/get-music-folders () :get)
+;; browsing/get-indexes
+;; browsing/get-music-directory
+(sonic browsing/get-genres () :get)
+;; browsing/get-artists
+;; browsing/get-artist
+;; browsing/get-album
+;; browsing/get-song
+(sonic browsing/get-videos () :get)
+;; browsing/get-video-info
+;; browsing/get-artist-info
+;; browsing/get-artist-info-2
+;; browsing/get-album-info
+;; browsing/get-album-info-2
+;; browsing/get-similar-songs
+;; browsing/get-similar-songs-2
+;; browsing/get-top-songs
 
-;;;; album/song lists
-;; album-song-lists/getAlbumList
-;; album-song-lists/getAlbumList2
-;; album-song-lists/getRandomSongs
-;; album-song-lists/getSongsByGenre
-(sonic album-song-lists/getNowPlaying () :get)
-;; album-song-lists/getStarred
-;; album-song-lists/getStarred2
+;;;; album/song list endpoints
+;; album-song-lists/get-album-list
+;; album-song-lists/get-album-list-2
+;; album-song-lists/get-random-songs
+;; album-song-lists/get-songs-by-genre
+(sonic album-song-lists/get-now-playing () :get)
+;; album-song-lists/get-starred
+;; album-song-lists/get-starred2
 
-;;;; searching
+;;;; searching endpoints
 ;; searching/search
 ;; searching/search2
 ;; searching/search3
 
-;;;; playlists
-;; playlists/getPlaylists
-;; playlists/getPlaylist
-;; playlists/createPlaylist
-;; playlists/updatePlaylist
-;; playlists/deletePlaylist
+;;;; playlist endpoints
+;; playlists/get-playlists
+;; playlists/get-playlist
+;; playlists/create-playlist
+;; playlists/update-playlist
+;; playlists/delete-playlist
 
-;;;; media retrieval
+;;;; media retrieval endpoints
 ;; media-retrieval/stream
 ;; media-retrieval/download
 ;; media-retrieval/hls
-;; media-retrieval/getCaptions
-;; media-retrieval/getCoverArt
-;; media-retrieval/getLyrics
-;; media-retrieval/getAvatar
-;; media-retrieval/getLyricsBySongId
+;; media-retrieval/get-captions
+;; media-retrieval/get-cover-art
+;; media-retrieval/get-lyrics
+;; media-retrieval/get-avatar
+;; media-retrieval/get-lyrics-by-song-id
 
-;;;; media annotation
+;;;; media annotation endpoints
 ;; media-annotation/star
 ;; media-annotation/unstar
-;; media-annotation/setRating
+;; media-annotation/set-rating
 ;; media-annotation/scrobble
 
-;;;; sharing
-;; sharing/getShares
-;; sharing/createShare
-;; sharing/updateShare
-;; sharing/deleteShare
+;;;; sharing endpoints
+;; sharing/get-shares
+;; sharing/create-share
+;; sharing/update-share
+;; sharing/delete-share
 
-;;;; podcast
-;; podcast/getPodcasts
-;; podcast/getNewestPodcasts
-;; podcast/refreshPodcasts
-;; podcast/createPodcastChannel
-;; podcast/deletePodcastChannel
-;; podcast/deletePodcastEpisode
-;; podcast/downloadPodcastEpisode
+;;;; podcast endpoints
+;; podcast/get-podcasts
+;; podcast/get-newest-podcasts
+;; podcast/refresh-podcasts
+;; podcast/create-podcast-phannel
+;; podcast/delete-podcast-channel
+;; podcast/delete-podcast-episode
+;; podcast/download-podcast-episode
 
-;;;; jukebox
-;; jukebox/jukeboxControl
+;;;; jukebox endpoitsn
+;; jukebox/jukebox-control
 
-;;;; internet radio
-;; internet-;;radio/;;getInternetRadioStations
-;; internet-;;radio/;;createInternetRadioStation
-;; internet-;;radio/;;updateInternetRadioStation
-;; internet-;;radio/;;deleteInternetRadioStation
+;;;; internet radio endpoints
+;; internet-radio/get-internet-radio-stations
+;; internet-radio/create-internet-radio-station
+;; internet-radio/update-internet-radio-station
+;; internet-radio/delete-internet-radio-station
 
-;;;; chat
-;; chat/getChatMessages
-;; chat/addChatMessage
+;;;; chat endpoints
+;; chat/get-chat-messages
+;; chat/add-chat-message
 
-;;;; user management
-;; user-management/getUser
-;; user-management/getUsers
-;; user-management/createUser
-;; user-management/updateUser
-;; user-management/deleteUser
-;; user-management/changePassword
+;;;; user management endpoints
+;; user-management/get-user
+;; user-management/get-users
+;; user-management/create-user
+;; user-management/update-user
+;; user-management/delete-user
+;; user-management/change-password
 
-;;;; bookmarks
-;; bookmarks/getBookmarks
-;; bookmarks/createBookmark
-;; bookmarks/deleteBookmark
-;; bookmarks/getPlayQueue
-;; bookmarks/savePlayQueue
+;;;; bookmark endpoints
+;; bookmarks/get-bookmarks
+;; bookmarks/create-bookmark
+;; bookmarks/delete-bookmark
+;; bookmarks/get-play-queue
+;; bookmarks/save-play-queue
 
-;;;; media library scanning
-;; media-library-scanning/getScanStatus
-;; media-library-scanning/startScan
+;;;; media library scanning endpoints
+(sonic media-library-scanning/get-scan-status () :get)
+(sonic media-library-scanning/start-scan () :get)
