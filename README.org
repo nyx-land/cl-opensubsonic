@@ -1,0 +1,10 @@
+#+begin_src elisp :exports "none"
+(org-gfm-export-to-markdown)
+#+end_src
+
+#+RESULTS:
+: README.md
+
+* Sone: OpenSubsonic in Common Lisp
+
+This is an implementation of the [[https://opensubsonic.netlify.app/][OpenSubsonic]] API.
