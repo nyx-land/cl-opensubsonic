@@ -1,4 +1,4 @@
-(in-package :sonic)
+(in-package :sonic.client)
 
 (defvar *salt-len* 24)
 (defconstant +charset+ "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")

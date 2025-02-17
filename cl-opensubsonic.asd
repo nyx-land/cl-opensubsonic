@@ -8,4 +8,4 @@
                 :components
                 ((:file "package")
                  (:file "util")
-                 (:file "cl-opensubsonic")))))
+                 (:file "client")))))
