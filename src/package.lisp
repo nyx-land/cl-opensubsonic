@@ -1,10 +1,11 @@
 (defpackage #:cl-opensubsonic
   (:use :cl)
   (:nicknames :sonic)
-  (:local-nicknames (:jzon :com.inuoe.jzon)))
+  (:export :split-api :remove-kebab))
 
 (defpackage #:cl-opensubsonic.client
-  (:use :cl-opensubsonic)
-  (:nicknames :sonic.client))
+  (:use :cl :cl-opensubsonic)
+  (:nicknames :sonic.client)
+  (:local-nicknames (:jzon :com.inuoe.jzon)))
 
 (in-package :sonic)
