@@ -10,7 +10,7 @@
 This is an implementation of the [[https://opensubsonic.netlify.app/][OpenSubsonic]] client API in Common
 Lisp.
 
-* Usage
+** Usage
 
 At the most basic level: To use =CL-OpenSubsonic= you have to
 initialize a =LOGIN= object and optionally bind it to a variable

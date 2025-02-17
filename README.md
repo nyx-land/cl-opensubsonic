@@ -1,17 +1,17 @@
-- [CL-OpenSubsonic](#org1f0c6db)
-- [Usage](#org77f8897)
+- [CL-OpenSubsonic](#org06ee95a)
+  - [Usage](#org94ba676)
 
 
-<a id="org1f0c6db"></a>
+<a id="org06ee95a"></a>
 
 # CL-OpenSubsonic
 
 This is an implementation of the [OpenSubsonic](https://opensubsonic.netlify.app/) client API in Common Lisp.
 
 
-<a id="org77f8897"></a>
+<a id="org94ba676"></a>
 
-# Usage
+## Usage
 
 At the most basic level: To use `CL-OpenSubsonic` you have to initialize a `LOGIN` object and optionally bind it to a variable (though this is obviously recommended so you can pass it to the API functions).
 
