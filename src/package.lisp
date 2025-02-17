@@ -1,6 +1,6 @@
 (defpackage #:cl-opensubsonic
   (:use :cl)
-  (:nicknames :sone)
+  (:nicknames :sonic)
   (:local-nicknames (:jzon :com.inuoe.jzon)))
 
-(in-package :sone)
+(in-package :sonic)

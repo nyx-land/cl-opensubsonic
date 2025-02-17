@@ -3,7 +3,9 @@
                "com.inuoe.jzon"
                "ironclad"
                "quri")
+  :serial t
   :components ((:module "src"
                 :components
                 ((:file "package")
+                 (:file "util")
                  (:file "cl-opensubsonic")))))

@@ -5,6 +5,6 @@
 #+RESULTS:
 : README.md
 
-* Sone: OpenSubsonic in Common Lisp
+* CL-OpenSubsonic
 
-This is an implementation of the [[https://opensubsonic.netlify.app/][OpenSubsonic]] API.
+This is an implementation of the [[https://opensubsonic.netlify.app/][OpenSubsonic]] client API in Common Lisp.
