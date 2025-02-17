@@ -1,16 +1,16 @@
-- [CL-OpenSubsonic](#org69c9fc3)
-  - [Status](#org63bc713)
-  - [Usage](#orge7196ec)
+- [CL-OpenSubsonic](#org9e03472)
+  - [Status](#org406b33e)
+  - [Usage](#org96938e6)
 
 
-<a id="org69c9fc3"></a>
+<a id="org9e03472"></a>
 
 # CL-OpenSubsonic
 
 This is an implementation of the [OpenSubsonic](https://opensubsonic.netlify.app/) client API in Common Lisp.
 
 
-<a id="org63bc713"></a>
+<a id="org406b33e"></a>
 
 ## Status
 
@@ -19,7 +19,7 @@ The OpenSubsonic API isn't very complicated to implement, especially thanks to C
 Note that this is currently mostly untested and that each OpenSubsonic implementation is going to likely differ slightly from each other. PRs welcome.
 
 
-<a id="orge7196ec"></a>
+<a id="org96938e6"></a>
 
 ## Usage
 
