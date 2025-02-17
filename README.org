@@ -29,6 +29,7 @@ To load "cl-opensubsonic":
     cl-opensubsonic
 [package cl-opensubsonic].........................
 [package cl-opensubsonic.client]..
+; Loading "cl-opensubsonic"
 
 (:CL-OPENSUBSONIC)
 CL-USER> (in-package :sonic.client)

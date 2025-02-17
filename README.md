@@ -1,15 +1,15 @@
-- [CL-OpenSubsonic](#orge592b46)
-- [Usage](#org5cd7f29)
+- [CL-OpenSubsonic](#org1f0c6db)
+- [Usage](#org77f8897)
 
 
-<a id="orge592b46"></a>
+<a id="org1f0c6db"></a>
 
 # CL-OpenSubsonic
 
 This is an implementation of the [OpenSubsonic](https://opensubsonic.netlify.app/) client API in Common Lisp.
 
 
-<a id="org5cd7f29"></a>
+<a id="org77f8897"></a>
 
 # Usage
 
@@ -24,6 +24,7 @@ To load "cl-opensubsonic":
     cl-opensubsonic
 [package cl-opensubsonic].........................
 [package cl-opensubsonic.client]..
+; Loading "cl-opensubsonic"
 
 (:CL-OPENSUBSONIC)
 CL-USER> (in-package :sonic.client)
