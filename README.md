@@ -1,15 +1,25 @@
-- [CL-OpenSubsonic](#org06ee95a)
-  - [Usage](#org94ba676)
+- [CL-OpenSubsonic](#org69c9fc3)
+  - [Status](#org63bc713)
+  - [Usage](#orge7196ec)
 
 
-<a id="org06ee95a"></a>
+<a id="org69c9fc3"></a>
 
 # CL-OpenSubsonic
 
 This is an implementation of the [OpenSubsonic](https://opensubsonic.netlify.app/) client API in Common Lisp.
 
 
-<a id="org94ba676"></a>
+<a id="org63bc713"></a>
+
+## Status
+
+The OpenSubsonic API isn't very complicated to implement, especially thanks to Common Lisp's macro system which is used here to abstract over the mostly boilerplate task of writing HTTP requests. On paper, this implements nearly all of the API (with a few exceptions).
+
+Note that this is currently mostly untested and that each OpenSubsonic implementation is going to likely differ slightly from each other. PRs welcome.
+
+
+<a id="orge7196ec"></a>
 
 ## Usage
 
@@ -45,3 +55,7 @@ CLIENT> (alexandria:hash-table-alist (system/ping *login*))
  ("version" . "1.15.0") ("status" . "ok"))
 CLIENT> 
 ```
+
+The API is quite straightforward to use: Every function is mapped by its name to the corresponding API call in OpenSubsonic (converting from kebab to camel case), takes at minimum a `LOGIN` object, and potentially some parameters which will be passed as either query parameters in a GET request or POST parameters depending on whether or not the OpenSubsonic server supports the [extension in question](https://opensubsonic.netlify.app/docs/extensions/formpost/).
+
+If an API call takes parameters, they may be required or optional, which is mapped to the parameters of the function itself.
